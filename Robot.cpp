@@ -92,9 +92,19 @@ public:
 	void TeleopInit() {}
 
 	void TeleopPeriodic() {
+		
+		
+		// make it so we can switch directions with button 3
+		static bool switchable = true;
+		static float direction = 1;
+		if (switchable && xbox.GetRawButton(3)) {
+			switchable = false;
+			direction = -direction;
+		} else if(!switchable && !xbox.GetRawButton(3))
+			switchable = true;
 
 		// drive based on controller input
-		drive.ArcadeDrive(-xbox.GetRawAxis(1), xbox.GetRawAxis(4));
+		drive.ArcadeDrive(direction * xbox.GetRawAxis(1), xbox.GetRawAxis(4) * 0.8);
 
 		// control pneumatics
 		if (xbox.GetRawButton(1)) {
@@ -105,7 +115,7 @@ public:
 			dumper.Set(frc::DoubleSolenoid::kOff);
 		}
 		
-		// Control front arm motors
+		// Control front arm motor
 		if (xbox.GetRawButton(5)) {
 			armMot.Set(1);
 		} else if (xbox.GetRawButton(6)) {
